@@ -1,0 +1,30 @@
+services:
+  windows:
+    image: dockurr/windows
+    container_name: windows
+    # Mantém o container vivo e volta para a tela ao reiniciar
+    restart: unless-stopped
+    environment:
+      VERSION: "11"               # Mudado para Windows 11
+      USERNAME: "Wrick"           # Novo usuário
+      PASSWORD: "wrick25322@R2Lr" # Nova senha
+      RAM_SIZE: "7G"              # RAM de 7 Gigabytes
+      CPU_CORES: "10"             # 10 Núcleos de processamento
+      DISK_SIZE: "1T"             # Disco de 1 Terabyte
+      VM: "N"                     # Mantém o disfarce anti-VM para tentar enganar o Byfron
+      # Injeta a placa virtual 3D e esconde as assinaturas do emulador
+      ARGUMENTS: "-cpu host,kvm=off,hv_vendor_id=null,-hypervisor -device virtio-vga-gl,vgamem_mb=256 -display egl-headless"
+    volumes:
+      - ./dados_windows:/storage  # Pasta local para salvar tudo e não perder os dados
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+      - /dev/dri:/dev/dri        # Renderizador de vídeo do Linux
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8006:8006
+      - 3389:3389/tcp
+      - 3389:3389/udp
+    # Define o tempo de encerramento do Docker para 5 dias
+    stop_grace_period: 120h
